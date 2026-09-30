@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledger Nilai — X ULP  Semester Ganjil  2026/2027</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;9..144,800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0C1A3A;--navy2:#162B5C;--navy3:#1F3D80;
+  --gold:#C8932A;--gold2:#E8B44A;--gold3:#F5D98B;--gold-bg:#FEF3DA;
+  --teal:#0F7B61;--teal2:#14A881;--teal-bg:#E0F5EF;
+  --sky:#1A6FB5;--sky-bg:#E5F1FC;
+  --green:#2D6A4F;--green-bg:#EFF6EF;
+  --rose:#B83A5A;--rose-bg:#FDEAF0;
+  --bg:#F4F2EC;--surface:#fff;
+  --border:rgba(12,26,58,.10);
+  --text:#0C1A3A;--muted:#6474A0;
+  --r:12px;
+}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.topbar{background:var(--navy);padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.topbar-brand{display:flex;align-items:center;gap:10px;}
+.topbar-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--navy);}
+.topbar-title{color:#fff;font-size:14px;font-weight:700;line-height:1.3;}
+.topbar-title span{display:block;font-size:11px;font-weight:400;color:rgba(255,255,255,.45);}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:9px;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none;transition:transform .15s,opacity .15s;white-space:nowrap;}
+.btn:hover{transform:translateY(-1px);opacity:.9;}
+.btn-back{background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#fff;}
+.btn-excel{background:#1D6F42;color:#fff;}
+.btn-pdf{background:var(--rose);color:#fff;}
+.btn-print{background:var(--gold);color:var(--navy);}
+.btn-reload{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;}
+
+.hero-strip{background:linear-gradient(135deg,var(--navy2) 0%,var(--navy3) 100%);padding:28px 32px 24px;position:relative;overflow:hidden;}
+.hero-strip::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 80% at 95% 50%,rgba(200,147,42,.18) 0%,transparent 65%);pointer-events:none;}
+.hero-inner{max-width:1400px;margin:0 auto;position:relative;z-index:1;}
+.hero-inner h1{font-family:'Fraunces',serif;font-size:clamp(20px,2.5vw,28px);font-weight:800;color:#fff;line-height:1.15;margin-bottom:6px;}
+.hero-inner h1 em{font-style:normal;color:var(--gold3);}
+.hero-inner p{font-size:13px;color:rgba(255,255,255,.5);}
+.stats-row{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap;}
+.stat-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 18px;text-align:center;}
+.stat-chip .n{font-size:20px;font-weight:800;color:#fff;line-height:1;}
+.stat-chip .n b{color:var(--gold3);}
+.stat-chip .l{font-size:10px;font-weight:600;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.06em;margin-top:3px;}
+
+.update-bar{background:rgba(255,255,255,.06);border-top:1px solid rgba(255,255,255,.08);padding:7px 32px;font-size:11px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:8px;}
+.update-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;flex-shrink:0;}
+.update-dot.loading{background:var(--gold2);animation:pulse 1s infinite;}
+.update-dot.error{background:var(--rose);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.tabs-wrap{background:var(--surface);border-bottom:1.5px solid var(--border);position:sticky;top:0;z-index:50;}
+.tabs{max-width:1400px;margin:0 auto;display:flex;padding:0 32px;}
+.tab{padding:14px 20px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy);}
+.tab:hover:not(.active){color:var(--navy);border-bottom-color:rgba(12,26,58,.2);}
+
+.main{max-width:1400px;margin:0 auto;padding:28px 32px 60px;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+.skeleton{background:linear-gradient(90deg,#e8e6e0 25%,#f0ede6 50%,#e8e6e0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.loading-box{padding:48px;text-align:center;color:var(--muted);}
+.loading-box .spin{display:inline-block;width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.error-box{background:var(--rose-bg);border:1.5px solid rgba(184,58,90,.2);border-radius:var(--r);padding:24px 28px;margin-bottom:24px;}
+.error-box h3{color:var(--rose);font-size:14px;font-weight:700;margin-bottom:6px;}
+.error-box p{font-size:13px;color:#7A2040;line-height:1.6;}
+.error-box code{background:rgba(184,58,90,.1);padding:2px 6px;border-radius:4px;font-size:12px;}
+
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:24px;}
+.sum-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.sum-card .s-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.sum-card .s-val{font-size:22px;font-weight:800;color:var(--navy);line-height:1;}
+.sum-card .s-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+.table-outer{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:24px;}
+.table-toolbar{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1.5px solid var(--border);flex-wrap:wrap;}
+.table-toolbar-title{font-size:13px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px;}
+.table-scroll{overflow-x:auto;}
+
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th,td{padding:9px 10px;text-align:center;border-right:1px solid var(--border);border-bottom:1px solid var(--border);white-space:nowrap;}
+th:last-child,td:last-child{border-right:none;}
+tr:last-child td{border-bottom:none;}
+
+.th-main{background:var(--navy);color:#fff;font-size:10px;font-weight:700;padding:10px 9px;}
+.th-group-umum{background:var(--sky);color:#fff;font-size:10px;font-weight:700;}
+.th-group-kejuruan{background:var(--teal);color:#fff;font-size:10px;font-weight:700;}
+.th-group-mulok{background:var(--green);color:#fff;font-size:10px;font-weight:700;}
+.th-group-rekap{background:var(--gold);color:var(--navy);font-size:10px;font-weight:700;}
+.th-sub-umum{background:var(--sky-bg);color:var(--sky);font-size:9px;font-weight:700;padding:8px 6px;line-height:1.4;max-width:90px;white-space:normal;}
+.th-sub-kejuruan{background:var(--teal-bg);color:var(--teal);font-size:9px;font-weight:700;padding:8px 6px;line-height:1.4;max-width:90px;white-space:normal;}
+.th-sub-mulok{background:var(--green-bg);color:var(--green);font-size:9px;font-weight:700;padding:8px 6px;line-height:1.4;max-width:90px;white-space:normal;}
+
+.td-no{font-weight:700;color:var(--muted);width:36px;}
+.td-nis{color:var(--muted);font-size:11px;}
+.td-nama{text-align:left;font-weight:600;color:var(--navy);min-width:180px;padding-left:14px;}
+.td-val{font-weight:600;}
+.td-val.empty{color:#CCC;}
+.td-jumlah{font-weight:800;color:var(--gold);background:var(--gold-bg);}
+.td-rata{font-weight:800;color:var(--navy);background:var(--gold-bg);}
+.td-rank{font-weight:800;background:var(--gold-bg);}
+.row-even{background:#fff;}
+.row-odd{background:#F9F8F5;}
+.row-footer{background:var(--navy2);}
+.row-footer td{color:#fff;font-weight:700;font-size:11px;border-color:rgba(255,255,255,.12);}
+.row-footer .td-nama{color:rgba(255,255,255,.85);}
+
+.val-hi{color:#0F7B61;}
+.val-mid{color:#A05E10;}
+.val-lo{color:#B83A5A;}
+
+.rank-badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-size:11px;font-weight:800;}
+.rank-1{background:#FFD700;color:#7A5800;}
+.rank-2{background:#C0C0C0;color:#4A4A4A;}
+.rank-3{background:#CD7F32;color:#fff;}
+.rank-other{background:var(--sky-bg);color:var(--sky);}
+.rank-none{background:#F0F0F0;color:#BBB;}
+
+.progress-wrap{margin-bottom:20px;}
+.progress-label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;}
+.progress-bar{height:6px;background:#E8E6E0;border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:3px;transition:width .8s ease;}
+
+.legend{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);}
+.legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px;}
+
+.rekap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;}
+.rekap-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:transform .2s,box-shadow .2s;}
+.rekap-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(12,26,58,.08);}
+.rekap-card.top1{border-color:#FFD700;background:linear-gradient(135deg,#FFFDE7,#fff);}
+.rekap-card.top2{border-color:#C0C0C0;background:linear-gradient(135deg,#F8F8F8,#fff);}
+.rekap-card.top3{border-color:#CD7F32;background:linear-gradient(135deg,#FFF5E6,#fff);}
+.medal{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;}
+.medal-1{background:#FFD700;color:#7A5800;}
+.medal-2{background:#C0C0C0;color:#444;}
+.medal-3{background:#CD7F32;color:#fff;}
+.medal-n{background:var(--sky-bg);color:var(--sky);font-size:13px;}
+.medal-empty{background:#F0F0F0;color:#CCC;font-size:13px;}
+.rekap-info{flex:1;min-width:0;}
+.rekap-name{font-size:13px;font-weight:700;color:var(--navy);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rekap-nis{font-size:11px;color:var(--muted);margin-top:1px;}
+.rekap-rata{font-size:15px;font-weight:800;color:var(--navy);margin-top:3px;}
+.rekap-rata span{font-size:11px;font-weight:500;color:var(--muted);}
+
+@media print{
+  .topbar,.tabs-wrap,.table-toolbar,.btn,.stats-row,.update-bar{display:none!important;}
+  .hero-strip{-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:12px 20px;}
+  .main{padding:10px 14px!important;}
+  .panel{display:block!important;}
+  body{background:#fff;}
+  .table-outer{border:none;}
+  th,td{font-size:8px!important;padding:4px 5px!important;}
+  .rekap-grid{grid-template-columns:repeat(4,1fr)!important;}
+  .progress-wrap{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">ULP</div>
+    <div class="topbar-title">
+      Ledger Nilai — X ULP 
+      <span>Semester Ganjil  · TP 2026/2027</span>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <a href="https://alex-bahy.github.io/Portal-Kelas-XULP-TP-2026-2027/" class="btn btn-back">← Kembali ke Portal</a>
+    <button class="btn btn-reload" onclick="loadData()">↻ Refresh Data</button>
+    <button class="btn btn-excel" onclick="downloadExcel()">⬇ Excel</button>
+    <button class="btn btn-pdf" onclick="downloadPDF()">⬇ PDF</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Cetak</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero-strip">
+  <div class="hero-inner">
+    <h1>Ledger Nilai <em>Semester Ganjil </em></h1>
+    <p>Kelas X Usaha Layanan Pariwisata · Tahun Pelajaran 2026/2027</p>
+    <div class="stats-row">
+      <div class="stat-chip"><div class="n" id="s-siswa">—</div><div class="l">Siswa</div></div>
+      <div class="stat-chip"><div class="n">12</div><div class="l">Mata Pelajaran</div></div>
+      <div class="stat-chip"><div class="n" id="s-terisi">—</div><div class="l">Nilai Terisi</div></div>
+      <div class="stat-chip"><div class="n" id="s-rata">—</div><div class="l">Rata-rata Kelas</div></div>
+    </div>
+  </div>
+  <div class="update-bar">
+    <div class="update-dot loading" id="status-dot"></div>
+    <span id="status-text">Memuat data dari Google Sheets…</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('ledger',this)">📋 Ledger Nilai</div>
+    <div class="tab" onclick="showTab('rekap',this)">🏆 Rekap Peringkat</div>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- PANEL LEDGER -->
+<div class="panel active" id="panel-ledger">
+  <div id="ledger-content">
+    <div class="loading-box">
+      <div class="spin"></div>
+      <div>Mengambil data dari Google Sheets…</div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL REKAP -->
+<div class="panel" id="panel-rekap">
+  <div id="rekap-content">
+    <div class="loading-box">
+      <div class="spin"></div>
+      <div>Memuat rekap peringkat…</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════
+// ▼▼▼ GANTI URL INI DENGAN URL WEB APP ANDA ▼▼▼
+// ═══════════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbwUrceQ53idNx4gLFPbb_iWYAmVE7uLP_oZ5yh3VcmmvFVthUozHHWMrn0C9N_gcJrCQA/exec';
+// ═══════════════════════════════════════════════
+// ▲▲▲ SELESAI — tidak perlu ubah yang lain  ▲▲▲
+// ═══════════════════════════════════════════════
+
+let STATE = { mapel: [], siswa: [], loaded: false };
+
+// ── API ──────────────────────────────────────────────────────
+async function loadData() {
+  setStatus('loading', 'Memuat data dari Google Sheets…');
+  setLoadingUI();
+
+  try {
+    const res  = await fetch(API_URL + '?action=all');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    STATE.mapel  = data.mapel  || [];
+    STATE.siswa  = data.siswa  || [];
+    STATE.loaded = true;
+
+    setStatus('ok', `Data berhasil dimuat · ${STATE.siswa.length} siswa · Diperbarui: ${new Date().toLocaleTimeString('id-ID')}`);
+    renderAll();
+
+  } catch (err) {
+    setStatus('error', 'Gagal memuat: ' + err.message);
+    showError(err.message);
+  }
+}
+
+function setStatus(type, msg) {
+  const dot  = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  dot.className  = 'update-dot' + (type==='loading'?' loading':type==='error'?' error':'');
+  text.textContent = msg;
+}
+
+function setLoadingUI() {
+  ['ledger-content','rekap-content'].forEach(id => {
+    document.getElementById(id).innerHTML =
+      `<div class="loading-box"><div class="spin"></div><div>Mengambil data…</div></div>`;
+  });
+}
+
+function showError(msg) {
+  const html = `<div class="error-box">
+    <h3>❌ Gagal Memuat Data</h3>
+    <p>Error: <code>${msg}</code><br><br>
+    Pastikan:<br>
+    • Variabel <code>API_URL</code> di dalam file HTML sudah diisi dengan URL Web App yang benar<br>
+    • Web App di-deploy dengan akses <strong>Anyone</strong><br>
+    • Nama sheet di <code>Code.gs</code> sudah sesuai</p>
+  </div>`;
+  ['ledger-content','rekap-content'].forEach(id => {
+    document.getElementById(id).innerHTML = html;
+  });
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function renderAll() {
+  renderLedger();
+  renderRekap();
+  updateHeroStats();
+}
+
+function updateHeroStats() {
+  const total  = STATE.siswa.length;
+  const filled = STATE.siswa.reduce((a,s) => a + s.nilai.filter(v=>v!==null).length, 0);
+  const withR  = STATE.siswa.filter(s => s.rata !== null);
+  const rata   = withR.length
+    ? (withR.reduce((a,s)=>a+s.rata,0)/withR.length).toFixed(2) : '—';
+  document.getElementById('s-siswa').textContent  = total;
+  document.getElementById('s-terisi').textContent = filled;
+  document.getElementById('s-rata').textContent   = rata;
+}
+
+function renderLedger() {
+  const { mapel, siswa } = STATE;
+  const totalCells = siswa.length * mapel.length;
+  const filled     = siswa.reduce((a,s)=>a+s.nilai.filter(v=>v!==null).length,0);
+  const pct        = totalCells ? Math.round(filled/totalCells*100) : 0;
+
+  const withR  = siswa.filter(s=>s.rata!==null);
+  const rata   = withR.length?(withR.reduce((a,s)=>a+s.rata,0)/withR.length).toFixed(2):'—';
+  const hi     = siswa.filter(s=>s.rata!==null&&s.rata>=80).length;
+  const mid    = siswa.filter(s=>s.rata!==null&&s.rata>=65&&s.rata<80).length;
+  const lo     = siswa.filter(s=>s.rata!==null&&s.rata<65).length;
+  const noData = siswa.filter(s=>s.rata===null).length;
+
+  const cards = [
+    {l:'Total Siswa',     v:siswa.length,  s:'terdaftar'},
+    {l:'Nilai Terisi',    v:filled,         s:`dari ${totalCells} sel`},
+    {l:'Kelengkapan',     v:pct+'%',        s:'data nilai'},
+    {l:'Rata-rata Kelas', v:rata,           s:'keseluruhan'},
+    {l:'Nilai ≥ 80',      v:hi,             s:'siswa', c:'var(--teal)'},
+    {l:'Nilai 65–79',     v:mid,            s:'siswa', c:'var(--gold)'},
+    {l:'Nilai < 65',      v:lo,             s:'siswa', c:'var(--rose)'},
+    {l:'Belum Ada Nilai', v:noData,         s:'siswa', c:'var(--muted)'},
+  ];
+
+  const sumHtml = `<div class="summary-grid">${cards.map(c=>`
+    <div class="sum-card">
+      <div class="s-label">${c.l}</div>
+      <div class="s-val" style="${c.c?'color:'+c.c:''}">${c.v}</div>
+      <div class="s-sub">${c.s}</div>
+    </div>`).join('')}</div>`;
+
+  const progHtml = `<div class="progress-wrap">
+    <div class="progress-label"><span>Kelengkapan Data Nilai</span><span>${pct}%</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  </div>`;
+
+  const nU = Math.min(6, mapel.length);
+  const nK = Math.min(5, mapel.length - nU);
+  const nM = mapel.length - nU - nK;
+
+  let r1 = `<tr>
+    <th class="th-main" rowspan="2">No</th>
+    <th class="th-main" rowspan="2">NIS</th>
+    <th class="th-main" rowspan="2" style="text-align:left;padding-left:12px;">Nama Siswa</th>`;
+  if(nU>0) r1+=`<th class="th-group-umum" colspan="${nU}">MATA PELAJARAN UMUM</th>`;
+  if(nK>0) r1+=`<th class="th-group-kejuruan" colspan="${nK}">MATA PELAJARAN KEJURUAN</th>`;
+  if(nM>0) r1+=`<th class="th-group-mulok" colspan="${nM}">MUATAN LOKAL</th>`;
+  r1+=`<th class="th-group-rekap" rowspan="2">Jumlah</th>
+       <th class="th-group-rekap" rowspan="2">Rata-rata</th>
+       <th class="th-main" rowspan="2">Peringkat</th></tr>`;
+
+  let r2 = '<tr>';
+  mapel.forEach((m,i) => {
+    const cls = i<nU?'th-sub-umum':i<nU+nK?'th-sub-kejuruan':'th-sub-mulok';
+    r2 += `<th class="${cls}">${m}</th>`;
+  });
+  r2 += '</tr>';
+
+  let rows = '';
+  siswa.forEach((s,i) => {
+    const cls = i%2===0?'row-even':'row-odd';
+    const rk  = s.peringkat;
+    const badge = rk===1?`<span class="rank-badge rank-1">🥇</span>`
+      : rk===2?`<span class="rank-badge rank-2">🥈</span>`
+      : rk===3?`<span class="rank-badge rank-3">🥉</span>`
+      : rk?`<span class="rank-badge rank-other">${rk}</span>`
+      : `<span class="rank-badge rank-none">—</span>`;
+    rows += `<tr class="${cls}">
+      <td class="td-no">${s.no}</td>
+      <td class="td-nis">${s.nis||'—'}</td>
+      <td class="td-nama">${s.nama}</td>`;
+    s.nilai.forEach(v => {
+      if(v===null) { rows+=`<td class="td-val empty">—</td>`; }
+      else {
+        const vc = v>=80?'val-hi':v>=65?'val-mid':'val-lo';
+        rows+=`<td class="td-val ${vc}">${v}</td>`;
+      }
+    });
+    rows+=`<td class="td-jumlah">${s.jumlah!==null?Math.round(s.jumlah):'—'}</td>
+           <td class="td-rata">${s.rata!==null?s.rata.toFixed(2):'—'}</td>
+           <td class="td-rank">${badge}</td></tr>`;
+  });
+
+  const mapelAvg = mapel.map((_,mi)=>{
+    const vals=siswa.map(s=>s.nilai[mi]).filter(v=>v!==null);
+    return vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
+  });
+  const withRata=siswa.filter(s=>s.rata!==null);
+  const rataK=withRata.length?(withRata.reduce((a,s)=>a+s.rata,0)/withRata.length).toFixed(2):'—';
+  rows+=`<tr class="row-footer"><td colspan="3" class="td-nama">RATA-RATA KELAS</td>
+    ${mapelAvg.map(v=>`<td>${v}</td>`).join('')}
+    <td>—</td><td>${rataK}</td><td>—</td></tr>`;
+
+  const tableHtml = `<div class="table-outer">
+    <div class="table-toolbar">
+      <div class="table-toolbar-title">📊 Ledger Nilai — X ULP · Semester Ganjil  2026/2027</div>
+      <div class="legend">
+        <span><span class="legend-dot" style="background:var(--sky)"></span>Umum</span>
+        <span><span class="legend-dot" style="background:var(--teal)"></span>Kejuruan</span>
+        <span><span class="legend-dot" style="background:var(--green)"></span>Mulok</span>
+        <span class="val-hi">■ ≥80</span>
+        <span class="val-mid">■ 65–79</span>
+        <span class="val-lo">■ &lt;65</span>
+      </div>
+    </div>
+    <div class="table-scroll"><table>${r1}${r2}${rows}</table></div>
+  </div>`;
+
+  document.getElementById('ledger-content').innerHTML = sumHtml + progHtml + tableHtml;
+}
+
+function renderRekap() {
+  const { siswa } = STATE;
+  if (!siswa.length) return;
+
+  const ranked  = [...siswa].filter(s=>s.rata!==null).sort((a,b)=>b.rata-a.rata);
+  const noValue = siswa.filter(s=>s.rata===null);
+
+  const withR = siswa.filter(s=>s.rata!==null);
+  const rata  = withR.length?(withR.reduce((a,s)=>a+s.rata,0)/withR.length).toFixed(2):'—';
+  const hi    = withR.filter(s=>s.rata>=80).length;
+  const cards = [
+    {l:'Total Siswa',     v:siswa.length, s:'terdaftar'},
+    {l:'Sudah Dinilai',   v:ranked.length, s:'siswa'},
+    {l:'Rata-rata Kelas', v:rata, s:'nilai'},
+    {l:'Nilai ≥ 80',      v:hi, s:'siswa', c:'var(--teal)'},
+  ];
+  const sumHtml = `<div class="summary-grid">${cards.map(c=>`
+    <div class="sum-card">
+      <div class="s-label">${c.l}</div>
+      <div class="s-val" style="${c.c?'color:'+c.c:''}">${c.v}</div>
+      <div class="s-sub">${c.s}</div>
+    </div>`).join('')}</div>`;
+
+  let th=`<tr>
+    <th class="th-main">Peringkat</th>
+    <th class="th-main">No</th>
+    <th class="th-main">NIS</th>
+    <th class="th-main" style="text-align:left;padding-left:12px;">Nama Siswa</th>
+    <th class="th-main">Rata-rata</th>
+    <th class="th-main">Nilai Terisi</th>
+  </tr>`;
+  let rows='';
+  ranked.forEach((s,i)=>{
+    const pos=i+1, cls=i%2===0?'row-even':'row-odd';
+    const badge=pos===1?`<span class="rank-badge rank-1">🥇</span>`
+      :pos===2?`<span class="rank-badge rank-2">🥈</span>`
+      :pos===3?`<span class="rank-badge rank-3">🥉</span>`
+      :`<span class="rank-badge rank-other">${pos}</span>`;
+    rows+=`<tr class="${cls}">
+      <td>${badge}</td><td class="td-no">${s.no}</td>
+      <td class="td-nis">${s.nis||'—'}</td>
+      <td class="td-nama">${s.nama}</td>
+      <td class="td-rata">${s.rata.toFixed(2)}</td>
+      <td style="color:var(--muted)">${s.nilai.filter(v=>v!==null).length} mapel</td>
+    </tr>`;
+  });
+  noValue.forEach((s,i)=>{
+    const cls=(ranked.length+i)%2===0?'row-even':'row-odd';
+    rows+=`<tr class="${cls}" style="opacity:.45">
+      <td><span class="rank-badge rank-none">—</span></td>
+      <td class="td-no">${s.no}</td>
+      <td class="td-nis">${s.nis||'—'}</td>
+      <td class="td-nama">${s.nama}</td>
+      <td style="color:#CCC">Belum ada nilai</td>
+      <td style="color:var(--muted)">0 mapel</td>
+    </tr>`;
+  });
+
+  const tableHtml = `<div class="table-outer">
+    <div class="table-toolbar">
+      <div class="table-toolbar-title">🏆 Rekap Peringkat Siswa</div>
+    </div>
+    <div class="table-scroll"><table>${th}${rows}</table></div>
+  </div>`;
+
+  const allSort=[...ranked,...noValue];
+  const cardsHtml=`<div class="rekap-grid">${allSort.map((s,i)=>{
+    const pos=s.peringkat;
+    const topCls=pos===1?'top1':pos===2?'top2':pos===3?'top3':'';
+    const mCls=pos===1?'medal-1':pos===2?'medal-2':pos===3?'medal-3':s.rata!==null?'medal-n':'medal-empty';
+    const mTxt=pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':pos||'—';
+    return `<div class="rekap-card ${topCls}">
+      <div class="medal ${mCls}">${mTxt}</div>
+      <div class="rekap-info">
+        <div class="rekap-name">${s.nama}</div>
+        <div class="rekap-nis">NIS: ${s.nis||'—'}</div>
+        <div class="rekap-rata">
+          ${s.rata!==null?s.rata.toFixed(2):'—'}
+          <span>${s.rata!==null?'rata-rata · '+s.nilai.filter(v=>v!==null).length+' mapel':'belum ada nilai'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+
+  document.getElementById('rekap-content').innerHTML = sumHtml + tableHtml + cardsHtml;
+}
+
+// ── DOWNLOAD EXCEL ───────────────────────────────────────────
+function downloadExcel() {
+  if(!STATE.loaded){alert('Data belum dimuat.');return;}
+  const {mapel,siswa}=STATE;
+  const wb=XLSX.utils.book_new();
+
+  const headers=['No','NIS','Nama Siswa',...mapel,'Jumlah','Rata-rata','Peringkat'];
+  const data1=[
+    ['LEDGER NILAI SEMESTER GANJIL TAHUN PELAJARAN 2026/2027'],
+    ['Kelas X Manajemen Perkantoran dan Layanan Bisnis (X ULP)'],
+    [],
+    headers
+  ];
+  siswa.forEach(s=>{
+    data1.push([s.no,s.nis||'',s.nama,
+      ...s.nilai.map(v=>v!==null?v:''),
+      s.jumlah!==null?+Math.round(s.jumlah):'',
+      s.rata!==null?+s.rata.toFixed(2):'',
+      s.peringkat||'']);
+  });
+  const ws1=XLSX.utils.aoa_to_sheet(data1);
+  ws1['!cols']=[{wch:4},{wch:10},{wch:30},...mapel.map(()=>({wch:12})),{wch:9},{wch:9},{wch:9}];
+  XLSX.utils.book_append_sheet(wb,ws1,'Ledger Nilai');
+
+  const ranked=[...siswa].filter(s=>s.rata!==null).sort((a,b)=>b.rata-a.rata);
+  const data2=[
+    ['REKAP PERINGKAT — SEMESTER GANJIL 2026/2027'],
+    ['Kelas X ULP '],
+    [],
+    ['Peringkat','No','NIS','Nama Siswa','Rata-rata','Nilai Terisi']
+  ];
+  ranked.forEach((s,i)=>{
+    data2.push([i+1,s.no,s.nis||'',s.nama,+s.rata.toFixed(2),s.nilai.filter(v=>v!==null).length+' mapel']);
+  });
+  const ws2=XLSX.utils.aoa_to_sheet(data2);
+  ws2['!cols']=[{wch:10},{wch:6},{wch:12},{wch:32},{wch:12},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws2,'Rekap Peringkat');
+
+  XLSX.writeFile(wb,'Ledger_Nilai_XULP _Ganjil _2025-2026.xlsx');
+}
+
+// ── DOWNLOAD PDF ─────────────────────────────────────────────
+function downloadPDF() {
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='block');
+  window.print();
+  setTimeout(()=>{
+    document.querySelectorAll('.panel').forEach(p=>p.style.display='');
+    document.getElementById('panel-ledger').classList.add('active');
+  },500);
+}
+
+// ── TABS ─────────────────────────────────────────────────────
+function showTab(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>
